@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>DisplayOptions</RootNamespace>
+    <AssemblyName>DisplayOptions</AssemblyName>
+    <Nullable>disable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+
+    <!-- Required: dotnet build -p:RimWorldDir="D:\path\to\RimWorld" -->
+    <RimWorldManagedDir>$(RimWorldDir)\RimWorldWin64_Data\Managed</RimWorldManagedDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(RimWorldManagedDir)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(RimWorldManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(ProjectDir)..\Lib\0Harmony.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Drop the built DLL (and Harmony) straight into the mod's Assemblies folder (a sibling of About, not inside it) -->
+  <Target Name="CopyToModAssemblies" AfterTargets="Build">
+    <MakeDir Directories="$(ProjectDir)..\..\Assemblies" Condition="!Exists('$(ProjectDir)..\..\Assemblies')" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ProjectDir)..\..\Assemblies" />
+    <Copy SourceFiles="$(ProjectDir)..\Lib\0Harmony.dll" DestinationFolder="$(ProjectDir)..\..\Assemblies" />
+  </Target>
+
+</Project>

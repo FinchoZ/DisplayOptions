@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ModMetaData>
+  <packageId>fincho.displayoptions</packageId>
+  <name>Display Options</name>
+  <author>FinchoZombie</author>
+  <url></url>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <description>Adds Windowed, Borderless or Exclusive Fullscreen directly to Options > Video without having to edit launch options.
+
+Thank you Marnador for the Rimworld Font!</description>
+</ModMetaData>

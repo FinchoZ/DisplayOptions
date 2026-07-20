@@ -1,0 +1,23 @@
+# Packaged release zips
+/dist/
+
+# .NET / Visual Studio / Rider
+bin/
+obj/
+*.user
+.vs/
+.idea/
+*.suo
+*.pdb
+.vscode/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+_ReSharper*/
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# RimWorld's own game assemblies
+Assembly-CSharp.dll
+UnityEngine*.dll
