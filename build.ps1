@@ -57,8 +57,6 @@ if ($LASTEXITCODE -ne 0) {
     throw "Build failed."
 }
 
-Copy-Item -Force $harmony $outDir
-
 Write-Host "Built $out"
 
 if ($Deploy) {

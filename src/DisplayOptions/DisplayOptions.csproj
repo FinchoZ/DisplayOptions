@@ -29,15 +29,16 @@
     </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(ProjectDir)..\Lib\0Harmony.dll</HintPath>
-      <Private>true</Private>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
-  <!-- Drop the built DLL (and Harmony) straight into the mod's Assemblies folder (a sibling of About, not inside it) -->
+  <!-- Drop the built DLL straight into the mod's Assemblies folder (a sibling of About, not inside it). -->
+  <!-- Harmony is supplied at runtime by the separate "Harmony" Workshop mod (see About.xml modDependencies) -->
+  <!-- so it's only referenced here for compiling, never copied/shipped. -->
   <Target Name="CopyToModAssemblies" AfterTargets="Build">
     <MakeDir Directories="$(ProjectDir)..\..\Assemblies" Condition="!Exists('$(ProjectDir)..\..\Assemblies')" />
     <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ProjectDir)..\..\Assemblies" />
-    <Copy SourceFiles="$(ProjectDir)..\Lib\0Harmony.dll" DestinationFolder="$(ProjectDir)..\..\Assemblies" />
   </Target>
 
 </Project>
