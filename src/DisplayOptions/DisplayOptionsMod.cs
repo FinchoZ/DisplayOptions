@@ -125,6 +125,13 @@ namespace DisplayOptions
         [DllImport("user32.dll")] private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         [DllImport("user32.dll")] private static extern bool SetWindowPos(IntPtr hWnd, IntPtr after, int x, int y, int cx, int cy, uint flags);
 
+        // The rect hacks below work around a Windows-only Unity bug (no native
+        // borderless mode, stale border offset breaking mouse-to-client mapping).
+        // macOS/Linux don't have that bug, so they skip straight to Unity's own
+        // fullscreen handling and never touch user32.dll (which doesn't exist there).
+        private static readonly bool IsWindows = Application.platform == RuntimePlatform.WindowsPlayer
+            || Application.platform == RuntimePlatform.WindowsEditor;
+
         private static IntPtr Hwnd()
         {
             IntPtr h = Process.GetCurrentProcess().MainWindowHandle;
@@ -145,6 +152,15 @@ namespace DisplayOptions
         public static void Apply(FullScreenMode mode)
         {
             Resolution native = Screen.currentResolution;
+
+            if (!IsWindows)
+            {
+                bool windowed = mode == FullScreenMode.Windowed;
+                int nw = windowed ? Mathf.RoundToInt(native.width * 0.8f) : native.width;
+                int nh = windowed ? Mathf.RoundToInt(native.height * 0.8f) : native.height;
+                Screen.SetResolution(nw, nh, mode);
+                return;
+            }
 
             if (mode == FullScreenMode.Windowed)
             {
@@ -175,6 +191,11 @@ namespace DisplayOptions
         // focus (falls back to windowed instead of throwing), so wait for it.
         public static IEnumerator WaitForFocusThenApply(FullScreenMode mode)
         {
+            // Apply() already ran once synchronously in the mod constructor; on
+            // non-Windows platforms that's sufficient; and there's no OS focus
+            // negotiation quirk here to wait out.
+            if (!IsWindows) yield break;
+
             float deadline = Time.realtimeSinceStartup + 5f;
             while (!Application.isFocused && Time.realtimeSinceStartup < deadline)
                 yield return null;
