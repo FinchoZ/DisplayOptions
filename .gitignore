@@ -1,6 +1,3 @@
-# Packaged release zips
-/dist/
-
 # .NET / Visual Studio / Rider
 bin/
 obj/
