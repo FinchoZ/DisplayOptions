@@ -1,12 +1,16 @@
 <#
 Builds the mod and zips it into a release-ready archive at
-dist/DisplayOptions-v<version>.zip (containing About/ and Assemblies/),
-ready to attach to a GitHub Release.
+dist/DisplayOptions-v<version>.zip (containing About/ and Assemblies/).
 
 -SkipBuild packages the Assemblies/ already committed to the repo instead of
 recompiling. RimWorld's own DLLs can't be built against on a CI runner (they're
 Ludeon's copyrighted files, not something we can ship or fetch there), so this
-is what GitHub Actions uses - the actual mod DLL is built locally and committed.
+is what .github/workflows/release.yml uses - the actual mod DLL is built
+locally and committed, and CI just packages + publishes it.
+
+-Publish tags and pushes vX.Y.Z, which triggers that workflow to build the zip
+and create the GitHub Release - it does not create the release itself, so it
+doesn't need `gh` auth locally.
 #>
 
 param(
@@ -17,14 +21,14 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$root = $PSScriptRoot
+$root = Split-Path $PSScriptRoot -Parent
 
 if (-not $Version) {
     $Version = (Get-Content (Join-Path $root "VERSION") -Raw).Trim()
 }
 
 if (-not $SkipBuild) {
-    & (Join-Path $root "build.ps1") -RimWorldDir $RimWorldDir
+    & (Join-Path $PSScriptRoot "build.ps1") -RimWorldDir $RimWorldDir
 }
 
 $distDir = Join-Path $root "dist"
@@ -45,6 +49,5 @@ Write-Host "Packaged $zipPath"
 if ($Publish) {
     git tag "v$Version"
     git push origin "v$Version"
-    gh release create "v$Version" $zipPath --title "v$Version" --notes "Release v$Version"
-    Write-Host "Published release v$Version"
+    Write-Host "Pushed tag v$Version - GitHub Actions will build and publish the release."
 }

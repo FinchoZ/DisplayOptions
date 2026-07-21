@@ -24,7 +24,7 @@ if (-not (Test-Path $csc)) {
     throw "csc.exe not found at '$csc'."
 }
 
-$root = $PSScriptRoot
+$root = Split-Path $PSScriptRoot -Parent
 $src = Join-Path $root "src\DisplayOptions\DisplayOptionsMod.cs"
 $harmony = Join-Path $root "src\Lib\0Harmony.dll"
 $outDir = Join-Path $root "Assemblies"
